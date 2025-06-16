@@ -1036,14 +1036,10 @@ KV Cache 在 LLM 中占比大，现在的 serving system 的内存管理会存�
 
 现存系统不能很好的利用 memory sharing，共享前缀等。
 
-
-
 ## 贡献
 
 -   由虚拟内存、分页技术启发，提出 PagedAttention，在逻辑上连续，物理存储上不连续的块上计算注意力
 -   以 PagedAttention 为核心，设计实现了 vLLM，分布式服务引擎
-
-
 
 ## vLLM Design
 
@@ -1057,7 +1053,7 @@ KV Cache 在 LLM 中占比大，现在的 serving system 的内存管理会存�
 
 -   调度，FCFS；由于没有关于生成长度的先验，边生成边申请，会遇到内存耗尽的情况。
 
-    提出启发式的选择预计会访问最远的块放逐，同时考虑到 LLM 的特性，使用 **all-or-nothing** 的放逐策略，对于 Beam，采用 gang-schedule 一起放逐（同样是考虑到 LLM 的特性，要么全要用，要么全不用）
+    提出启发式的选择预计会**最晚访问**的块放逐，同时考虑到 LLM 的特性，使用 **all-or-nothing** 的放逐策略，对于 Beam，采用 gang-schedule 一起放逐（同样是考虑到 LLM 的特性，要么全要用，要么全不用）
 
     停止接收请求，等到能放回来之后，把放逐的块完成了后，才继续接收（能够预留足够内存，防止 trashing 颠簸）
 
@@ -1067,8 +1063,6 @@ KV Cache 在 LLM 中占比大，现在的 serving system 的内存管理会存�
     -   Recomputation，重计算
 
 -   分布式执行，为了避免 GPU worker 需要多次和 memory manager 同步，设计 centralized scheduler，GPU worker 之间 all-reduce
-
-
 
 ## 实现与实验
 
@@ -1087,13 +1081,9 @@ KV Cache 在 LLM 中占比大，现在的 serving system 的内存管理会存�
 -   Block size 的选择，小浪费GPU并行资源，大浪费内部内存碎片
 -   重计算和交换的比较
 
-
-
 ## 优化思路
 
 引入 OS 的虚拟内存、页表的思想，管理 KV cache
-
-
 
 ## 未来可能方向
 
@@ -1101,37 +1091,67 @@ KV Cache 在 LLM 中占比大，现在的 serving system 的内存管理会存�
 
 动态选择重计算或交换内存
 
-
-
 ## 源码阅读
 
 [vLLM](https://github.com/vllm-project/vllm)
 
 [具体代码学习](vLLM.md)
 
-
-
 # SGLang: Efficient Execution of Structured Language Model Programs
 
 ## 动机
 
+-   编程复杂，有高级抽象库，但是性能瓶颈大；底层推理引擎又过于繁琐，难以编写复杂程序。
+-   推理效率低下，需要控制权来回切换，开销大，特别是在大量小规模的复杂逻辑（多轮对话、工具使用）中。
+-   KV cache 的高效利用、共享不充分。
 
+## 困难
+
+-   需要重新整合顶层的功能需求和底层，工程难度大。
+-   需要设计新的 KV cache 存储逻辑。
 
 ## 贡献
 
+1.   SGLang 前端语言
 
+     -   提供了 Python 接口，实际上设计了一种 DSL，把 Python 函数编译成**计算图**。
+     -   使得 Python 的**控制流**能直接在 Runtime 运行时中执行，避免了切换，实现「一次启动，全程运行」
+
+2.   SGLang 运行时（SRT）
+
+     -   RadixAttention
+
+         将所有请求的 KV cache 存储在全局的共享的 Radix Tree 基数树中，提高了缓存的利用率。
+
+         且 PagedAttn 实际上是 RadixAttn 的退化成线性链表的特例。
+
+     -   Structure Output
+
+         可以强制按照**JSON**、**正则表达式**格式输出，把约束编译为一个压缩的**有限状态机**（Finite State Machine，FSM）
+
+         在确定的部分，可以直接**跳过**，提升效率。
+
+消融实验，证明吞吐量提高，多场景具有性能优势。
+
+同时将 GPT-4 作为「编译器」，对计算图进行优化（把更可能成为前缀的部分，排到最前面），来增加可共享的前缀长度。
 
 ## 总结
 
+SGLang，全新的 LLM Serving System，提供了更细腻 LLM DSL，同时，用 RadixAttn 和 FSM 提升 KV cache 利用率与结构化输出效率。
 
+## 局限 / 未来可能方向
 
-## 优化思路
+（论文中提到的）
 
+增强前端语言的表达能力。现在牺牲 Python 的动态性了，需要按照 SGLang 设定的编程范式写。
 
+目前是解释器，后续扩展到编译器，同时进行更深度的编译器优化。
 
-## 未来可能方向
+与其他编程模型结合。
 
+（我的想法）
 
+安全问题，全局的数据结构共享，可能存在各种侧信道攻击的问题。
 
 ## 源码阅读
 
