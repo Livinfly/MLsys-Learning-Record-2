@@ -1125,10 +1125,12 @@ KV Cache 在 LLM 中占比大，现在的 serving system 的内存管理会存�
 
          且 PagedAttn 实际上是 RadixAttn 的退化成线性链表的特例。
 
+         同时，采用 longest-shared-prefix-first order 的调度策略来得到更高的缓存命中率。
+
      -   Structure Output
 
          可以强制按照**JSON**、**正则表达式**格式输出，把约束编译为一个压缩的**有限状态机**（Finite State Machine，FSM）
-
+     
          在确定的部分，可以直接**跳过**，提升效率。
 
 消融实验，证明吞吐量提高，多场景具有性能优势。
@@ -1149,6 +1151,8 @@ SGLang，全新的 LLM Serving System，提供了更细腻 LLM DSL，同时，�
 
 与其他编程模型结合。
 
+调度上会存在**饥饿**问题需要优化。
+
 （我的想法）
 
 安全问题，全局的数据结构共享，可能存在各种侧信道攻击的问题。
@@ -1163,21 +1167,25 @@ SGLang，全新的 LLM Serving System，提供了更细腻 LLM DSL，同时，�
 
 [论文地址](https://arxiv.org/abs/2211.17192)
 
-
-
 ## 动机
 
+-   大型AR自回归模型推理慢
+-   任务分为**难的**和**简单的**，简单的往往有更加高效执行的模型
+-   大模型的推理的瓶颈，相比于**计算**，更在于**内存带宽、通信**，增加**并行计算**
 
+### 先前工作
+
+-   对模型结构改变大、结果一致性一般
+-   没有针对**瓶颈**特别设计
 
 ## 贡献
 
+-   用 **Speculative Sampling** 推测采样，把 **Speculative Execution** 推测执行推广到**随机设置**场景中
+-   提出 **Speculative Decoding** 推测解码，加速AR自回归模型
 
 
-## 总结
 
 
-
-## 优化思路
 
 
 
@@ -1187,7 +1195,7 @@ SGLang，全新的 LLM Serving System，提供了更细腻 LLM DSL，同时，�
 
 ## 源码阅读
 
-
+[民间个人实现](https://github.com/romsto/Speculative-Decoding)
 
 # DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving
 
