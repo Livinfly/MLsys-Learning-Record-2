@@ -20,7 +20,9 @@ LLM，prefill 阶段和 decoding 阶段的**资源分配**和**并行策略**耦
 
 -   Continuous Batching, Chunked Prefill
 
+    能够提高 GPU 利用率，最大化整个系统的吞吐量。变成 TTFT 和 TPOT 之间的 trade-off。
     
+    具体地，Chunked Prefill 就是这样 trade-off 的一种方法，本质上，不能解决两者的干涉。
 
 ## 方法
 
