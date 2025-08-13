@@ -2,13 +2,13 @@
 
 [论文地址](https://arxiv.org/abs/2404.14294)
 
-![image-20250530145619430](mlsys_inference_paper_reports.assets/image-20250530145619430.png)
+![image-20250530145619430](figures/image-20250530145619430.png)
 
 ## Data-Level
 
 ### Input Compression
 
-![image-20250530145636775](mlsys_inference_paper_reports.assets/image-20250530145636775.png)
+![image-20250530145636775](figures/image-20250530145636775.png)
 
 ICL, In-Context Learning，给出问答示例，与 CoT, Chain-of-Thought 都会在释放 LLM 的能力的同时让 prompt 变长，所以就提出了 输入压缩 Input Compression
 
@@ -97,7 +97,7 @@ RAG检索增强，只把大量数据中的和目标相关的检索内容装入�
 
 ### Efficient Structure Design
 
-![image-20250530145711824](mlsys_inference_paper_reports.assets/image-20250530145711824.png)
+![image-20250530145711824](figures/image-20250530145711824.png)
 
 #### Efficient FFN Design
 
@@ -233,11 +233,11 @@ Switch transformers、Gshard、Tutel 等，常用 BMM batch matrix multiplicatio
 
 推理，循环结构，使得长度无关，削除对cache、加载前面的token等需要
 
-![image-20250531225058384](mlsys_inference_paper_reports.assets/image-20250531225058384.png)
+![image-20250531225058384](figures/image-20250531225058384.png)
 
 ### Model Compression
 
-![image-20250530145740376](mlsys_inference_paper_reports.assets/image-20250530145740376.png)
+![image-20250530145740376](figures/image-20250530145740376.png)
 
 #### Quantization
 
@@ -247,9 +247,9 @@ Decoding stage 内存访问开销大，载入大权重 tensor，Weight-only Quan
 
 ##### Post-Training Quantization
 
-![image-20250531231412236](mlsys_inference_paper_reports.assets/image-20250531231412236.png)
+![image-20250531231412236](figures/image-20250531231412236.png)
 
-![image-20250531231526586](mlsys_inference_paper_reports.assets/image-20250531231526586.png)
+![image-20250531231526586](figures/image-20250531231526586.png)
 
 不再 retrain
 
@@ -526,7 +526,7 @@ Dynamic Attention Pruning
 
 和 MoE 不同，DI 是提前退出
 
-![image-20250604155858594](mlsys_inference_paper_reports.assets/image-20250604155858594.png)
+![image-20250604155858594](figures/image-20250604155858594.png)
 
 ##### Sample-level.
 
@@ -569,7 +569,7 @@ Dynamic Attention Pruning
 
 ### Inference Engine
 
-![image-20250530145842809](mlsys_inference_paper_reports.assets/image-20250530145842809.png)
+![image-20250530145842809](figures/image-20250530145842809.png)
 
 #### Graph and Operator Optimization
 
@@ -692,7 +692,7 @@ Kernel fusion 为代表，降低内存访问，kernel启动开销，增加并行
 
 ### Serving System
 
-![image-20250530145931125](mlsys_inference_paper_reports.assets/image-20250530145931125.png)
+![image-20250530145931125](figures/image-20250530145931125.png)
 
 提高异步请求效率
 
@@ -782,7 +782,7 @@ vLLM 的 PagedAttn K缓存的头大小维度存储为16字节连续向量，Flas
 
 ### Comparison of LLM Frameworks
 
-![image-20250605162339494](mlsys_inference_paper_reports.assets/image-20250605162339494.png)
+![image-20250605162339494](figures/image-20250605162339494.png)
 
 ### Knowledge, Suggestions and Future Direction
 

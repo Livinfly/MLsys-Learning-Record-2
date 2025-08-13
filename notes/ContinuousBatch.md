@@ -28,7 +28,7 @@ Continuous Batch
 
      Scheduler 来选择 request set，调用 Execution Engine，接受运行结果，用运行结果更新 Request Pool
 
-     ![image-20250606154147823](mlsys_inference_paper_reports.assets/image-20250606154147823.png)
+     ![image-20250606154147823](figures/image-20250606154147823.png)
 
 2. Batching an arbitrary set of requests
 
@@ -58,7 +58,7 @@ Continuous Batch
 
      注意力算子，是采用 Split、单独计算、Merge 的方式，用 Attention K/V Manager 为每个请求单独管理 kv cache
 
-     ![image-20250606220226044](mlsys_inference_paper_reports.assets/image-20250606220226044.png)
+     ![image-20250606220226044](figures/image-20250606220226044.png)
 
 ## Orca Design
 

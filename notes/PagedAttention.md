@@ -17,7 +17,7 @@ KV Cache 在 LLM 中占比大，现在的 serving system 的内存管理会存�
 
 ## vLLM Design
 
-![image-20250610165125085](mlsys_inference_paper_reports.assets/image-20250610165125085.png)
+![image-20250610165125085](figures/image-20250610165125085.png)
 
 - PagedAttention 算子
 
