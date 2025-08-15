@@ -42,6 +42,14 @@ Decode，inter-op
 
 -   通信开销变大，显然 prefill 和 decode 的机器之间需要通信
 
+
+
+在延迟要求不高的场景，追求吞吐量而非goodput时，chunked-prefill with piggyback 将会是好选择。
+
+资源限制严重的场景。
+
+长文本的场景，KV cache 的传输压力线性增长，但 prefill 的计算量是二次增长，传输的相对时间是小了。
+
 ## 方法
 
 给定模型、负载特征、延迟要求，SLO 目标（percentage of requests that meet TTFT requirement），DistServe 会确定并行策略，计算实例数量的分配，在物理集群中怎么放置。（称为 placement），最大化 goodput 实际吞吐量。
@@ -50,6 +58,9 @@ Decode，inter-op
 
 在线调度上，请求先到中央控制器，再分配给**最短等待序列**的 prefill 实例，处理完成后，再选择**负载最小**的 decoding 实例。
 
-根据 GPU 满载来倒推$L_m$，见效 pipeline bubbles；
+-   根据 GPU 满载来倒推$L_m$，减小 pipeline bubbles。
 
-对于业务中的**过载**情况，使用 pull 方法，而不是 push 方法，把 prefill 实例的内存作为 queuing buffer。
+-   对于业务中的**过载**情况，使用 pull 方法，而不是 push 方法，把 prefill 实例的内存作为 queuing buffer。
+
+-   面对实际变化大负载，在出现较大偏差时，进行 replan，重新分配。
+-   

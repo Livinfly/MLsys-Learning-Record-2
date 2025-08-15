@@ -13,4 +13,4 @@
 - [x] PagedAttention vLLM [Efficient Memory Management for Large Language Model Serving with PagedAttention](./notes/PagedAttention.md)
 - [x] SGLang [SGLang Efficient Execution of Structured Language Model Programs](./notes/SGLang_paper.md)
 - [x] Speculative Decoding [Fast Inference from Transformers via Speculative Decoding](./notes/SpeculativeDecoding.md)
-- [ ] 🚧[DistServe Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving](./notes/DistServe.md)
+- [x] PD 分离, goodput, latency-sentive, DistServe [DistServe Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving](./notes/DistServe.md)
